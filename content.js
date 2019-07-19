@@ -278,7 +278,8 @@ async function prepareMessageResponse(message) {
 			title: title,
 			content: body.innerHTML,
 			images: images,
-			pageUrl: getPageLocationOrigin() + location.pathname + location.search
+			pageUrl: getPageLocationOrigin() + location.pathname + location.search,
+			clipType: 'page'
 		};
 	}
 	else {

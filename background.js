@@ -216,7 +216,8 @@ async function saveWholePage() {
 async function saveNote(title, content) {
 	const resp = await triliumServerFacade.callService('POST', 'notes', {
 		title: title,
-		content: content
+		content: content,
+		clipType: 'note'
 	});
 
 	if (!resp) {
