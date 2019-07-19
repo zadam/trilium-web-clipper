@@ -42,9 +42,9 @@ echo "Tagging commit with $TAG"
 git tag "$TAG"
 git push origin "$TAG"
 
-bin/build.sh
+bin/build-firefox.sh
 
-BUILD=trilium-web-clipper-$VERSION.zip
+FIREFOX_BUILD=trilium_web_clipper-$VERSION-an+fx.xpi
 
 echo "Creating release in GitHub"
 
@@ -56,7 +56,7 @@ echo "Uploading build package"
 
 github-release upload \
     --tag "$TAG" \
-    --name "$BUILD" \
-    --file "dist/$BUILD"
+    --name "$FIREFOX_BUILD" \
+    --file "dist/$FIREFOX_BUILD"
 
 echo "Release finished!"
