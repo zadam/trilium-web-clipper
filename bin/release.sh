@@ -48,15 +48,9 @@ BUILD=trilium-web-clipper-$VERSION.zip
 
 echo "Creating release in GitHub"
 
-EXTRA=
-
-if [[ $TAG == *"beta"* ]]; then
-  EXTRA=--pre-release
-fi
-
 github-release release \
     --tag "$TAG" \
-    --name "$TAG release" $EXTRA
+    --name "$TAG release"
 
 echo "Uploading build package"
 
