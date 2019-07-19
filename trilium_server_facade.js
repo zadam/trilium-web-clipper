@@ -1,7 +1,7 @@
 function isDevEnv() {
 	const manifest = browser.runtime.getManifest();
 
-	return manifest.name.endsWith('(dev)') >= 0;
+	return manifest.name.endsWith('(dev)');
 }
 
 class TriliumServerFacade {
