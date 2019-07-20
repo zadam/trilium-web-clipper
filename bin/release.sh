@@ -46,7 +46,7 @@ bin/release-firefox.sh
 bin/release-chrome.sh
 
 FIREFOX_BUILD=trilium_web_clipper-$VERSION-an+fx.xpi
-CHROME_BUILD=trilium_web_clipper-${VERSION}-chrome.crx
+CHROME_BUILD=trilium_web_clipper-${VERSION}-chrome.zip
 
 echo "Creating release in GitHub"
 
