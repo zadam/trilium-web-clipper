@@ -1,4 +1,4 @@
-const PROTOCOL_VERSION_MAJOR = 2;
+const PROTOCOL_VERSION_MAJOR = 1;
 
 function isDevEnv() {
 	const manifest = browser.runtime.getManifest();
