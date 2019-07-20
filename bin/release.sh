@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export GITHUB_REPO=trilium-webclipper
+export GITHUB_REPO=trilium-web-clipper
 
 if [[ $# -eq 0 ]] ; then
     echo "Missing argument of new version"
