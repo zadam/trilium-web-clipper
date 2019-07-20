@@ -1,3 +1,5 @@
+const PROTOCOL_VERSION_MAJOR = 2;
+
 function isDevEnv() {
 	const manifest = browser.runtime.getManifest();
 
@@ -28,11 +30,31 @@ class TriliumServerFacade {
 		this.sendTriliumSearchStatusToPopup();
 	}
 
+	setTriliumSearchWithVersionCheck(json, resp) {
+		const [major, minor] = json.protocolVersion
+			.split(".")
+			.map(chunk => parseInt(chunk));
+
+		// minor version is intended to be used to dynamically limit features provided by extension
+		// if some specific Trilium API is not supported. So far not needed.
+
+		if (major !== PROTOCOL_VERSION_MAJOR) {
+			this.setTriliumSearch({
+				status: 'version-mismatch',
+				extensionMajor: PROTOCOL_VERSION_MAJOR,
+				triliumMajor: major
+			});
+		}
+		else {
+			this.setTriliumSearch(resp);
+		}
+	}
+
 	async triggerSearchForTrilium() {
 		this.setTriliumSearch({ status: 'searching' });
 
 		const startingPort = await this.getStartingPort();
-
+		
 		for (let testedPort = startingPort; testedPort < startingPort + 10; testedPort++) {
 			try {
 				console.debug('Trying port ' + testedPort);
@@ -46,7 +68,7 @@ class TriliumServerFacade {
 				const json = JSON.parse(text);
 
 				if (json.appName === 'trilium') {
-					this.setTriliumSearch({
+					this.setTriliumSearchWithVersionCheck(json, {
 						status: 'found-desktop',
 						port: testedPort,
 						url: 'http://127.0.0.1:' + testedPort
@@ -78,11 +100,12 @@ class TriliumServerFacade {
 				const json = JSON.parse(text);
 
 				if (json.appName === 'trilium') {
-					this.setTriliumSearch({
+					this.setTriliumSearchWithVersionCheck(json, {
 						status: 'found-server',
 						url: triliumServerUrl,
 						token: authToken
 					});
+
 					return;
 				}
 			}

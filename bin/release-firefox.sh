@@ -2,8 +2,6 @@
 
 WEB_EXT_ID="{1410742d-b377-40e7-a9db-63dc9c6ec99c}"
 
-VERSION=$(jq -r ".version" manifest.json)
-
 ARTIFACT_NAME=trilium-web-clipper-firefox
 BUILD_DIR=dist/$ARTIFACT_NAME
 
@@ -16,7 +14,7 @@ cd dist/"${ARTIFACT_NAME}" || exit
 
 jq '.name = "Trilium Web Clipper"' manifest.json | sponge manifest.json
 
-web-ext sign --id ${WEB_EXT_ID} --artifacts-dir ../
+web-ext sign --id ${WEB_EXT_ID} --artifacts-dir ../ --channel=listed
 
 cd ..
 rm -r "${ARTIFACT_NAME}"

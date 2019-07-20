@@ -105,6 +105,12 @@ browser.runtime.onMessage.addListener(request => {
             statusText = `<span style="color: red">Not found</span>`;
             isConnected = false;
         }
+        else if (triliumSearch.status === 'version-mismatch') {
+            const whatToUpgrade = triliumSearch.extensionMajor > triliumSearch.triliumMajor ? "Trilium Notes" : "this extension";
+
+            statusText = `<span style="color: orange">Trilium instance found, but it is not compatible with this extension version. Please update ${whatToUpgrade} to the latest version.</span>`;
+            isConnected = true;
+        }
         else if (triliumSearch.status === 'found-desktop') {
             statusText = `<span style="color: green">Connected on port ${triliumSearch.port}</span>`;
             isConnected = true;

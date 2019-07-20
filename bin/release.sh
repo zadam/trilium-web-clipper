@@ -42,9 +42,10 @@ echo "Tagging commit with $TAG"
 git tag "$TAG"
 git push origin "$TAG"
 
-bin/build-firefox.sh
+bin/release-firefox.sh
 
 FIREFOX_BUILD=trilium_web_clipper-$VERSION-an+fx.xpi
+CHROME_BUILD=trilium_web_clipper-${VERSION}-chrome.crx
 
 echo "Creating release in GitHub"
 
@@ -52,11 +53,18 @@ github-release release \
     --tag "$TAG" \
     --name "$TAG release"
 
-echo "Uploading build package"
+echo "Uploading firefox build package"
 
 github-release upload \
     --tag "$TAG" \
     --name "$FIREFOX_BUILD" \
     --file "dist/$FIREFOX_BUILD"
+
+echo "Uploading chrome build package"
+
+github-release upload \
+    --tag "$TAG" \
+    --name "$CHROME_BUILD" \
+    --file "dist/$CHROME_BUILD"
 
 echo "Release finished!"
