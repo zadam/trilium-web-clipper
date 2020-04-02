@@ -124,11 +124,15 @@ async function postProcessImage(image) {
 	if (image.src.startsWith("data:image/")) {
 		image.dataUrl = image.src;
 		image.src = "inline." + image.src.substr(11, 3); // this should extract file type - png/jpg
-
-		return;
 	}
-
-	image.dataUrl = await fetchImage(image.src, image);
+	else {
+		try {
+			image.dataUrl = await fetchImage(image.src, image);
+		}
+		catch (e) {
+			console.log(`Cannot fetch image from ${image.src}`);
+		}
+	}
 }
 
 async function postProcessImages(resp) {
@@ -268,6 +272,8 @@ browser.contextMenus.onClicked.addListener(async function(info, tab) {
 });
 
 browser.runtime.onMessage.addListener(async request => {
+	console.log("Received", request);
+
 	if (request.name === 'openNoteInTrilium') {
 		const resp = await triliumServerFacade.callService('POST', 'open/' + request.noteId);
 

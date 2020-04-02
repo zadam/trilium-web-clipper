@@ -189,14 +189,21 @@ function getImages(container) {
 			continue;
 		}
 
-		const imageId = randomString(20);
+		const existingImage = images.find(image => image.src === img.src);
 
-		images.push({
-			imageId: imageId,
-			src: img.src
-		});
+		if (existingImage) {
+			img.src = existingImage.imageId;
+		}
+		else {
+			const imageId = randomString(20);
 
-		img.src = imageId;
+			images.push({
+				imageId: imageId,
+				src: img.src
+			});
+
+			img.src = imageId;
+		}
 	}
 
 	return images;
