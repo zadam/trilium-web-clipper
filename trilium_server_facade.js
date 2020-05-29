@@ -54,7 +54,7 @@ class TriliumServerFacade {
 		this.setTriliumSearch({ status: 'searching' });
 
 		const startingPort = await this.getStartingPort();
-		
+
 		for (let testedPort = startingPort; testedPort < startingPort + 10; testedPort++) {
 			try {
 				console.debug('Trying port ' + testedPort);
@@ -163,6 +163,7 @@ class TriliumServerFacade {
 			await this.waitForTriliumSearch();
 
 			fetchOptions.headers.Authorization = this.triliumSearch.token || "";
+			fetchOptions.headers['trilium-local-now-datetime'] = this.localNowDateTime();
 
 			const url = this.triliumSearch.url + "/api/clipper/" + path;
 
@@ -183,6 +184,16 @@ class TriliumServerFacade {
 
 			return null;
 		}
+	}
+
+	localNowDateTime() {
+		const date = new Date();
+		const off = date.getTimezoneOffset();
+		const absoff = Math.abs(off);
+		return (new Date(date.getTime() - off * 60 * 1000).toISOString().substr(0,23).replace("T",  " ") +
+			(off > 0 ? '-' : '+') +
+			(absoff / 60).toFixed(0).padStart(2,'0') + ':' +
+			(absoff % 60).toString().padStart(2,'0'));
 	}
 }
 
