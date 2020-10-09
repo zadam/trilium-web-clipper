@@ -111,7 +111,7 @@ async function sendMessageToActiveTab(message) {
 		return await browser.tabs.sendMessage(activeTab.id, message);
 	}
 	catch (e) {
-		console.error("Sending message to active tab failed, you might need to refresh the page after updating the extension.", e);
+		throw e;
 	}
 }
 

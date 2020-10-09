@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 export GITHUB_REPO=trilium-web-clipper
 

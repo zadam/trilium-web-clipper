@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 WEB_EXT_ID="{1410742d-b377-40e7-a9db-63dc9c6ec99c}"
 

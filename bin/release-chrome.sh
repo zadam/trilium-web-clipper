@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 VERSION=$(jq -r ".version" manifest.json)
 CHROME_EXTENSION_ID=dfhgmnfclbebfobmblelddiejjcijbjm
