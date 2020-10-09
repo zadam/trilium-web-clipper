@@ -36,7 +36,12 @@ function cropImage(newArea, dataUrl) {
 async function takeScreenshot(cropRect) {
 	const activeTab = await getActiveTab();
 
-	const zoom = await browser.tabs.getZoom(activeTab.id);
+	const isFirefox = typeof InstallTrigger !== 'undefined';
+
+	// Chrome/blink do not incorporate automatically the devicePixelRatio so we need to do it manually
+	const zoom = await browser.tabs.getZoom(activeTab.id)
+		* (isFirefox ? 1 : window.devicePixelRatio);
+
 	const newArea = Object.assign({}, cropRect);
 	newArea.x *= zoom;
 	newArea.y *= zoom;
