@@ -1,16 +1,16 @@
 // Keyboard shortcuts
 chrome.commands.onCommand.addListener(async function (command) {
-    if(command=="saveSelection") {
+    if (command == "saveSelection") {
         await saveSelection();
     } else if (command == "saveWholePage") {
         await saveWholePage();
     } else if (command == "saveScreenshot") {
         const activeTab = await getActiveTab();
-        await saveScreenshot(activeTab);
+
+        await saveScreenshot(activeTab.url);
     } else {
         console.log("Unrecognized command", command);
     }
-
 });
 
 function cropImage(newArea, dataUrl) {
@@ -323,7 +323,9 @@ browser.runtime.onMessage.addListener(async request => {
 		return await browser.tabs.executeScript({file: request.file});
 	}
 	else if (request.name === 'save-screenshot') {
-		return await saveScreenshot();
+		const activeTab = await getActiveTab();
+
+		return await saveScreenshot(activeTab.url);
 	}
 	else if (request.name === 'save-whole-page') {
 		return await saveWholePage();
