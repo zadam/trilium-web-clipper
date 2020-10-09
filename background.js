@@ -1,3 +1,18 @@
+// Keyboard shortcuts
+chrome.commands.onCommand.addListener(async function (command) {
+    if(command=="saveSelection") {
+        await saveSelection();
+    } else if (command == "saveWholePage") {
+        await saveWholePage();
+    } else if (command == "saveScreenshot") {
+        const activeTab = await getActiveTab();
+        await saveScreenshot(activeTab);
+    } else {
+        console.log("Unrecognized command", command);
+    }
+
+});
+
 function cropImage(newArea, dataUrl) {
 	return new Promise((resolve, reject) => {
 		const img = new Image();
