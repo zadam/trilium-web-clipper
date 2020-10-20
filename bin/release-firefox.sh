@@ -15,7 +15,7 @@ cd dist/"${ARTIFACT_NAME}" || exit
 
 jq '.name = "Trilium Web Clipper"' manifest.json | sponge manifest.json
 
-web-ext sign --id ${WEB_EXT_ID} --api-key $FIREFOX_API_KEY --api-secret $FIREFOX_API_SECRET --artifacts-dir ../
+web-ext sign --api-key $FIREFOX_API_KEY --api-secret $FIREFOX_API_SECRET --artifacts-dir ../
 
 cd ..
 rm -r "${ARTIFACT_NAME}"
