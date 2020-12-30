@@ -53,33 +53,31 @@ class TriliumServerFacade {
 	async triggerSearchForTrilium() {
 		this.setTriliumSearch({ status: 'searching' });
 
-		const startingPort = await this.getStartingPort();
+		try {
+			const port = await this.getPort();
 
-		for (let testedPort = startingPort; testedPort < startingPort + 10; testedPort++) {
-			try {
-				console.debug('Trying port ' + testedPort);
+			console.debug('Trying port ' + port);
 
-				const resp = await fetch(`http://127.0.0.1:${testedPort}/api/clipper/handshake`);
+			const resp = await fetch(`http://127.0.0.1:${port}/api/clipper/handshake`);
 
-				const text = await resp.text();
+			const text = await resp.text();
 
-				console.log("Received response:", text);
+			console.log("Received response:", text);
 
-				const json = JSON.parse(text);
+			const json = JSON.parse(text);
 
-				if (json.appName === 'trilium') {
-					this.setTriliumSearchWithVersionCheck(json, {
-						status: 'found-desktop',
-						port: testedPort,
-						url: 'http://127.0.0.1:' + testedPort
-					});
+			if (json.appName === 'trilium') {
+				this.setTriliumSearchWithVersionCheck(json, {
+					status: 'found-desktop',
+					port: port,
+					url: 'http://127.0.0.1:' + port
+				});
 
-					return;
-				}
+				return;
 			}
-			catch (error) {
-				// continue
-			}
+		}
+		catch (error) {
+			// continue
 		}
 
 		const {triliumServerUrl} = await browser.storage.sync.get("triliumServerUrl");
@@ -136,7 +134,7 @@ class TriliumServerFacade {
 		});
 	}
 
-	async getStartingPort() {
+	async getPort() {
 		const {triliumDesktopPort} = await browser.storage.sync.get("triliumDesktopPort");
 
 		if (triliumDesktopPort) {
