@@ -251,50 +251,6 @@ async function saveWholePage() {
 	toast("Page has been saved to Trilium.", resp.noteId);
 }
 
-async function getTabsPayload(tabs) {
-	let content = '<ul>';
-	tabs.forEach(tab => {
-		content += `<li><a href="${tab.url}">${tab.title}</a></li>`
-	});
-	content += '</ul>';
-
-	// topDomains string with 1-3 most used domains will be used as the note title
-	// to help the user differentiate between multiple notes of this type
-	const domainsCount = tabs.map(tab => tab.url)
-		.reduce((acc, url) => {
-			const hostname = new URL(url).hostname
-			return acc.set(hostname, (acc.get(hostname) || 0) + 1)
-		}, new Map());
-
-	let topDomains = [...domainsCount]
-		.sort((a, b) => {return b[1]-a[1]})
-		.slice(0,3)
-		.map(domain=>domain[0])
-		.join(', ')
-
-	if (tabs.length > 3) { topDomains += '...' };
-
-	return {
-                title: `${tabs.length} browser tabs: ${topDomains}`,
-                content: content,
-                clipType: 'tabs'
-	};
-}
-
-async function saveTabs() {
-        const tabs = await getWindowTabs();
-
-	const payload = await getTabsPayload(tabs);
-
-	const resp = await triliumServerFacade.callService('POST', 'notes', payload);
-
-	if (!resp) {
-		return;
-	}
-
-	await closeWindowTabs(tabs);
-}
-
 async function saveNote(title, content) {
 	const resp = await triliumServerFacade.callService('POST', 'notes', {
 		title: title,
@@ -309,6 +265,48 @@ async function saveNote(title, content) {
 	toast("Note has been saved to Trilium.", resp.noteId);
 
 	return true;
+}
+
+async function getTabsPayload(tabs) {
+	let content = '<ul>';
+	tabs.forEach(tab => {
+		content += `<li><a href="${tab.url}">${tab.title}</a></li>`
+	});
+	content += '</ul>';
+
+	const domainsCount = tabs.map(tab => tab.url)
+		.reduce((acc, url) => {
+			const hostname = new URL(url).hostname
+			return acc.set(hostname, (acc.get(hostname) || 0) + 1)
+		}, new Map());
+
+	let topDomains = [...domainsCount]
+		.sort((a, b) => {return b[1]-a[1]})
+		.slice(0,3)
+		.map(domain=>domain[0])
+		.join(', ')
+
+	if (tabs.length > 3) { topDomains += '...' }
+
+	return {
+		title: `${tabs.length} browser tabs: ${topDomains}`,
+		content: content,
+		clipType: 'tabs'
+	};
+}
+
+async function saveTabs() {
+	const tabs = await getWindowTabs();
+
+	const payload = await getTabsPayload(tabs);
+
+	const resp = await triliumServerFacade.callService('POST', 'notes', payload);
+
+	if (!resp) {
+		return;
+	}
+
+	await closeWindowTabs(tabs);
 }
 
 browser.contextMenus.onClicked.addListener(async function(info, tab) {
@@ -388,11 +386,11 @@ browser.runtime.onMessage.addListener(async request => {
 	else if (request.name === 'save-whole-page') {
 		return await saveWholePage();
 	}
-	else if (request.name === 'save-tabs') {
-		return await saveTabs();
-	}
 	else if (request.name === 'save-note') {
 		return await saveNote(request.title, request.content);
+	}
+	else if (request.name === 'save-tabs') {
+		return await saveTabs();
 	}
 	else if (request.name === 'trigger-trilium-search') {
 		triliumServerFacade.triggerSearchForTrilium();
