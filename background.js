@@ -125,11 +125,12 @@ async function sendMessageToActiveTab(message) {
 	}
 }
 
-function toast(message, noteId = null) {
+function toast(message, noteId = null, tabIds = null) {
 	sendMessageToActiveTab({
 		name: 'toast',
 		message: message,
-		noteId: noteId
+		noteId: noteId,
+		tabIds: tabIds
 	});
 }
 
@@ -302,7 +303,11 @@ async function saveTabs() {
 		return;
 	}
 
-	toast(`${tabs.length} links have been saved to Trilium.`, resp.noteId);
+	toast(
+		`${tabs.length} links have been saved to Trilium.`,
+		resp.noteId,
+		tabs.map(tab=>{return tab.id})
+	);
 }
 
 browser.contextMenus.onClicked.addListener(async function(info, tab) {
@@ -370,6 +375,9 @@ browser.runtime.onMessage.addListener(async request => {
 				console.error("triliumServerUrl not found in local storage.");
 			}
 		}
+	}
+	else if (request.name === 'closeTabs') {
+		return await browser.tabs.remove(request.tabIds)
 	}
 	else if (request.name === 'load-script') {
 		return await browser.tabs.executeScript({file: request.file});
