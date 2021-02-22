@@ -303,11 +303,9 @@ async function saveTabs() {
 		return;
 	}
 
-	toast(
-		`${tabs.length} links have been saved to Trilium.`,
-		resp.noteId,
-		tabs.map(tab=>{return tab.id})
-	);
+	const tabIds = tabs.map(tab=>{return tab.id});
+
+	toast(`${tabs.length} links have been saved to Trilium.`, resp.noteId, tabIds);
 }
 
 browser.contextMenus.onClicked.addListener(async function(info, tab) {

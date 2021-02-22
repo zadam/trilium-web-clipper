@@ -209,14 +209,15 @@ function getImages(container) {
 	return images;
 }
 
-function createLink(clickMessage, text, color = "lightskyblue") {
+function createLink(clickAction, text, color = "lightskyblue") {
 	const link = document.createElement('a');
 	link.href = "javascript:";
 	link.style.color = color;
 	link.appendChild(document.createTextNode(text));
 	link.addEventListener("click", () => {
-		browser.runtime.sendMessage(null, clickMessage)
+		browser.runtime.sendMessage(null, clickAction)
 	});
+
 	return link
 }
 
@@ -230,20 +231,19 @@ async function prepareMessageResponse(message) {
 			messageText = document.createElement('p');
 			messageText.setAttribute("style", "padding: 0; margin: 0")
 			messageText.appendChild(document.createTextNode(message.message + " "));
-			openNoteLink = createLink(
-				{name: 'openNoteInTrilium',noteId: message.noteId},
+			messageText.appendChild(createLink(
+				{name: 'openNoteInTrilium', noteId: message.noteId},
 				"Open in Trilium."
-				)
-			messageText.appendChild(openNoteLink);
+			));
 
+			// only after saving tabs
 			if (message.tabIds) {
 				messageText.appendChild(document.createElement("br"));
-				closeTabsLink = createLink(
+				messageText.appendChild(createLink(
 					{name: 'closeTabs', tabIds: message.tabIds},
 					"Close saved tabs.",
 					"tomato"
-					)
-				messageText.appendChild(closeTabsLink);
+				));
 			}
 		}
 		else {
