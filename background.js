@@ -110,10 +110,6 @@ async function getWindowTabs() {
 	return tabs;
 }
 
-async function closeWindowTabs(tabs) {
-	await browser.tabs.remove(tabs.map(tab=>{return tab.id}));
-}
-
 async function sendMessageToActiveTab(message) {
 	const activeTab = await getActiveTab();
 
@@ -306,7 +302,7 @@ async function saveTabs() {
 		return;
 	}
 
-	await closeWindowTabs(tabs);
+	toast(`${tabs.length} links have been saved to Trilium.`, resp.noteId);
 }
 
 browser.contextMenus.onClicked.addListener(async function(info, tab) {
