@@ -12,12 +12,15 @@ async function sendMessage(message) {
 const $showOptionsButton = $("#show-options-button");
 const $clipScreenShotButton = $("#clip-screenshot-button");
 const $saveWholePageButton = $("#save-whole-page-button");
+const $saveTabsButton = $("#save-tabs-button");
 
 $showOptionsButton.on("click", () => browser.runtime.openOptionsPage());
 
 $clipScreenShotButton.on("click", () => sendMessage({name: 'save-screenshot'}));
 
 $saveWholePageButton.on("click", () => sendMessage({name: 'save-whole-page'}));
+
+$saveTabsButton.on("click", () => sendMessage({name: 'save-tabs'}));
 
 const $createTextNoteWrapper = $("#create-text-note-wrapper");
 const $textNote = $("#create-text-note-textarea");
