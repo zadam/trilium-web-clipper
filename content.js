@@ -23,24 +23,6 @@ function pageTitle() {
 	return titleElements.length ? titleElements[0].text.trim() : document.title.trim();
 }
 
-function getPageLocationOrigin() {
-	// location.origin normally returns the protocol + domain + port (eg. https://example.com:8080)
-	// but for file:// protocol this is browser dependant and in particular Firefox returns "null" in this case.
-	return location.protocol === 'file:' ? 'file://' : location.origin;
-}
-
-function getBaseUrl() {
-	let output = getPageLocationOrigin() + location.pathname;
-
-	if (output[output.length - 1] !== '/') {
-		output = output.split('/');
-		output.pop();
-		output = output.join('/');
-	}
-
-	return output;
-}
-
 function getReadableDocument() {
 	// Readability directly change the passed document so clone it so as
 	// to preserve the original web page.

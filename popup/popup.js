@@ -19,54 +19,55 @@ $clipScreenShotButton.on("click", () => sendMessage({name: 'save-screenshot'}));
 
 $saveWholePageButton.on("click", () => sendMessage({name: 'save-whole-page'}));
 
-const $createTextNoteWrapper = $("#create-text-note-wrapper");
-const $textNote = $("#create-text-note-textarea");
+const $saveLinkWithNoteWrapper = $("#save-link-with-note-wrapper");
+const $textNote = $("#save-link-with-note-textarea");
 
 $textNote.on('keypress', function (event) {
-    if (event.which === 10 || event.which === 13 && event.ctrlKey) {
-        saveNote();
+    if ((event.which === 10 || event.which === 13) && event.ctrlKey) {
+        saveLinkWithNote();
         return false;
     }
 
     return true;
 });
 
-$("#create-text-note-button").on("click", () => {
-    $createTextNoteWrapper.show();
+$("#save-link-with-note-button").on("click", () => {
+    $saveLinkWithNoteWrapper.show();
 
     $textNote[0].focus();
 });
 
 $("#cancel-button").on("click", () => {
-    $createTextNoteWrapper.hide();
+    $saveLinkWithNoteWrapper.hide();
     $textNote.val("");
 
     window.close();
 });
 
-async function saveNote() {
+async function saveLinkWithNote() {
     const textNoteVal = $textNote.val().trim();
-
-    if (textNoteVal.length === 0) {
-        alert("Note is empty. Please enter some text");
-        return;
-    }
-
-    const match = /^(.*?)([.?!]\s|\n)/.exec(textNoteVal);
     let title, content;
 
-    if (match) {
-        title = match[0].trim();
-        content = textNoteVal.substr(title.length).trim();
+    if (!textNoteVal) {
+        title = '';
+        content = '';
     }
     else {
-        title = textNoteVal;
-        content = '';
+        const match = /^(.*?)([.?!]\s|\n)/.exec(textNoteVal);
+
+        if (match) {
+            title = match[0].trim();
+            content = textNoteVal.substr(title.length).trim();
+        }
+        else {
+            title = textNoteVal;
+            content = '';
+        }
     }
 
     content = escapeHtml(content);
 
-    const result = await sendMessage({name: 'save-note', title, content});
+    const result = await sendMessage({name: 'save-link-with-note', title, content});
 
     if (result) {
         $textNote.val('');
@@ -75,7 +76,7 @@ async function saveNote() {
     }
 }
 
-$("#save-button").on("click", saveNote);
+$("#save-button").on("click", saveLinkWithNote);
 
 $("#show-help-button").on("click", () => {
     window.open("https://github.com/zadam/trilium/wiki/Web-clipper", '_blank');

@@ -237,18 +237,25 @@ async function saveWholePage() {
 	toast("Page has been saved to Trilium.", resp.noteId);
 }
 
-async function saveNote(title, content) {
+async function saveLinkWithNote(title, content) {
+	const activeTab = await getActiveTab();
+
+	if (!title.trim()) {
+		title = activeTab.title;
+	}
+
 	const resp = await triliumServerFacade.callService('POST', 'notes', {
 		title: title,
 		content: content,
-		clipType: 'note'
+		clipType: 'note',
+		pageUrl: activeTab.url
 	});
 
 	if (!resp) {
 		return false;
 	}
 
-	toast("Note has been saved to Trilium.", resp.noteId);
+	toast("Link with note has been saved to Trilium.", resp.noteId);
 
 	return true;
 }
@@ -330,8 +337,8 @@ browser.runtime.onMessage.addListener(async request => {
 	else if (request.name === 'save-whole-page') {
 		return await saveWholePage();
 	}
-	else if (request.name === 'save-note') {
-		return await saveNote(request.title, request.content);
+	else if (request.name === 'save-link-with-note') {
+		return await saveLinkWithNote(request.title, request.content);
 	}
 	else if (request.name === 'trigger-trilium-search') {
 		triliumServerFacade.triggerSearchForTrilium();

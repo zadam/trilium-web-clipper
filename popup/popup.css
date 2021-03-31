@@ -24,11 +24,11 @@ body {
   width: 100%;
 }
 
-#create-text-note-wrapper {
+#save-link-with-note-wrapper {
   display: none;
 }
 
-#create-text-note-textarea {
+#save-link-with-note-textarea {
   width: 100%;
 }
 
