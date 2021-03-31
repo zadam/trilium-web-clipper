@@ -191,6 +191,18 @@ function getImages(container) {
 	return images;
 }
 
+function createLink(clickAction, text, color = "lightskyblue") {
+	const link = document.createElement('a');
+	link.href = "javascript:";
+	link.style.color = color;
+	link.appendChild(document.createTextNode(text));
+	link.addEventListener("click", () => {
+		browser.runtime.sendMessage(null, clickAction)
+	});
+
+	return link
+}
+
 async function prepareMessageResponse(message) {
 	console.info('Message: ' + message.name);
 
@@ -198,21 +210,23 @@ async function prepareMessageResponse(message) {
 		let messageText;
 
 		if (message.noteId) {
-			messageText = document.createElement('span');
+			messageText = document.createElement('p');
+			messageText.setAttribute("style", "padding: 0; margin: 0")
 			messageText.appendChild(document.createTextNode(message.message + " "));
+			messageText.appendChild(createLink(
+				{name: 'openNoteInTrilium', noteId: message.noteId},
+				"Open in Trilium."
+			));
 
-			const link = document.createElement('a');
-			link.href = "javascript:";
-			link.style.color = "lightskyblue";
-			link.appendChild(document.createTextNode("Open in Trilium."));
-			link.addEventListener("click", () => {
-				browser.runtime.sendMessage(null, {
-					name: 'openNoteInTrilium',
-					noteId: message.noteId
-				})
-			});
-
-			messageText.appendChild(link);
+			// only after saving tabs
+			if (message.tabIds) {
+				messageText.appendChild(document.createElement("br"));
+				messageText.appendChild(createLink(
+					{name: 'closeTabs', tabIds: message.tabIds},
+					"Close saved tabs.",
+					"tomato"
+				));
+			}
 		}
 		else {
 			messageText = message.message;
