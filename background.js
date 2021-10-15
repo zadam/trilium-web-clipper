@@ -183,7 +183,7 @@ async function saveSelection() {
 	toast("Selection has been saved to Trilium.", resp.noteId);
 }
 
-async function getImagePayloadFromSrc(src, pageUrl) {
+async function getImagePayloadFromSrc(src, pageUrl, origin) {
 	const image = {
 		imageId: randomString(20),
 		src: src
@@ -197,16 +197,17 @@ async function getImagePayloadFromSrc(src, pageUrl) {
 		title: activeTab.title,
 		content: `<img src="${image.imageId}">`,
 		images: [image],
-		pageUrl: pageUrl
+		pageUrl: pageUrl,
+		origin: origin
 	};
 }
 
-async function saveScreenshot(pageUrl) {
+async function saveScreenshot(pageUrl, origin) {
 	const cropRect = await sendMessageToActiveTab({name: 'trilium-save-screenshot'});
 
 	const src = await takeScreenshot(cropRect);
 
-	const payload = await getImagePayloadFromSrc(src, pageUrl);
+	const payload = await getImagePayloadFromSrc(src, pageUrl, origin);
 
 	const resp = await triliumServerFacade.callService("POST", "clippings", payload);
 
@@ -217,8 +218,8 @@ async function saveScreenshot(pageUrl) {
 	toast("Screenshot has been saved to Trilium.", resp.noteId);
 }
 
-async function saveImage(srcUrl, pageUrl) {
-	const payload = await getImagePayloadFromSrc(srcUrl, pageUrl);
+async function saveImage(srcUrl, pageUrl, origin) {
+	const payload = await getImagePayloadFromSrc(srcUrl, pageUrl, origin);
 
 	const resp = await triliumServerFacade.callService("POST", "clippings", payload);
 
@@ -243,7 +244,7 @@ async function saveWholePage() {
 	toast("Page has been saved to Trilium.", resp.noteId);
 }
 
-async function saveLinkWithNote(title, content) {
+async function saveLinkWithNote(title, content, origin) {
 	const activeTab = await getActiveTab();
 
 	if (!title.trim()) {
@@ -254,7 +255,8 @@ async function saveLinkWithNote(title, content) {
 		title: title,
 		content: content,
 		clipType: 'note',
-		pageUrl: activeTab.url
+		pageUrl: activeTab.url,
+		origin: origin,
 	});
 
 	if (!resp) {
@@ -315,10 +317,10 @@ browser.contextMenus.onClicked.addListener(async function(info, tab) {
 		await saveSelection();
 	}
 	else if (info.menuItemId === 'trilium-save-screenshot') {
-		await saveScreenshot(info.pageUrl);
+		await saveScreenshot(info.pageUrl, info.origin);
 	}
 	else if (info.menuItemId === 'trilium-save-image') {
-		await saveImage(info.srcUrl, info.pageUrl);
+		await saveImage(info.srcUrl, info.pageUrl, info.origin);
 	}
 	else if (info.menuItemId === 'trilium-save-link') {
 		const link = document.createElement("a");
@@ -331,7 +333,8 @@ browser.contextMenus.onClicked.addListener(async function(info, tab) {
 		const resp = await triliumServerFacade.callService('POST', 'clippings', {
 			title: activeTab.title,
 			content: link.outerHTML,
-			pageUrl: info.pageUrl
+			pageUrl: info.pageUrl,
+			origin: info.origin
 		});
 
 		if (!resp) {

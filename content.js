@@ -259,7 +259,8 @@ async function prepareMessageResponse(message) {
 			title: pageTitle(),
 			content: container.innerHTML,
 			images: images,
-			pageUrl: getPageLocationOrigin() + location.pathname + location.search
+			pageUrl: getPageLocationOrigin() + location.pathname + location.search,
+			origin: getPageLocationOrigin(),
 		};
 
 	}
@@ -282,6 +283,7 @@ async function prepareMessageResponse(message) {
 			content: body.innerHTML,
 			images: images,
 			pageUrl: getPageLocationOrigin() + location.pathname + location.search,
+			origin: getPageLocationOrigin(),
 			clipType: 'page'
 		};
 	}
