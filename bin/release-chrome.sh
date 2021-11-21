@@ -23,4 +23,6 @@ zip -r ../${EXT_FILE_NAME} *
 cd ..
 rm -r "${BUILD_DIR}"
 
-webstore upload --source ${EXT_FILE_NAME} --auto-publish --extension-id "${CHROME_EXTENSION_ID}" --client-id "${CHROME_CLIENT_ID}" --client-secret "${CHROME_CLIENT_SECRET}" --refresh-token "${CHROME_REFRESH_TOKEN}"
+# https://github.com/fregante/chrome-webstore-upload-cli
+chrome-webstore-upload upload --source ${EXT_FILE_NAME} --auto-publish --extension-id "${CHROME_EXTENSION_ID}" --client-id "${CHROME_CLIENT_ID}" --client-secret "${CHROME_CLIENT_SECRET}" --refresh-token "${CHROME_REFRESH_TOKEN}"
+
