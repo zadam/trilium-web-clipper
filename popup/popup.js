@@ -10,13 +10,24 @@ async function sendMessage(message) {
 }
 
 const $showOptionsButton = $("#show-options-button");
-const $clipScreenShotButton = $("#clip-screenshot-button");
+const $saveCroppedScreenShotButton = $("#save-cropped-screenshot-button");
+const $saveWholeScreenShotButton = $("#save-whole-screenshot-button");
 const $saveWholePageButton = $("#save-whole-page-button");
 const $saveTabsButton = $("#save-tabs-button");
 
 $showOptionsButton.on("click", () => browser.runtime.openOptionsPage());
 
-$clipScreenShotButton.on("click", () => sendMessage({name: 'save-screenshot'}));
+$saveCroppedScreenShotButton.on("click", () => {
+    sendMessage({name: 'save-cropped-screenshot'});
+
+    window.close();
+});
+
+$saveWholeScreenShotButton.on("click", () => {
+    sendMessage({name: 'save-whole-screenshot'});
+
+    window.close();
+});
 
 $saveWholePageButton.on("click", () => sendMessage({name: 'save-whole-page'}));
 

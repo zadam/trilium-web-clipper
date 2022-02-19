@@ -9,7 +9,7 @@ chrome.commands.onCommand.addListener(async function (command) {
     } else if (command == "saveScreenshot") {
         const activeTab = await getActiveTab();
 
-        await saveScreenshot(activeTab.url);
+        await saveCroppedScreenshot(activeTab.url);
     } else {
         console.log("Unrecognized command", command);
     }
@@ -35,7 +35,7 @@ function cropImage(newArea, dataUrl) {
 	});
 }
 
-async function takeScreenshot(cropRect) {
+async function takeCroppedScreenshot(cropRect) {
 	const activeTab = await getActiveTab();
 	const zoom = await browser.tabs.getZoom(activeTab.id) *  window.devicePixelRatio;
 
@@ -48,6 +48,14 @@ async function takeScreenshot(cropRect) {
 	const dataUrl = await browser.tabs.captureVisibleTab(null, { format: 'png' });
 
 	return await cropImage(newArea, dataUrl);
+}
+
+async function takeWholeScreenshot() {
+	// this saves only visible portion of the page
+	// workaround to save the whole page is to scroll & stitch
+	// example in https://github.com/mrcoles/full-page-screen-capture-chrome-extension
+	// see page.js and popup.js
+	return await browser.tabs.captureVisibleTab(null, { format: 'png' });
 }
 
 browser.runtime.onInstalled.addListener(() => {
@@ -65,8 +73,20 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.create({
-	id: "trilium-save-screenshot",
+	id: "trilium-save-cropped-screenshot",
 	title: "Clip screenshot to Trilium",
+	contexts: ["page"]
+});
+
+browser.contextMenus.create({
+	id: "trilium-save-cropped-screenshot",
+	title: "Crop screen shot to Trilium",
+	contexts: ["page"]
+});
+
+browser.contextMenus.create({
+	id: "trilium-save-whole-screenshot",
+	title: "Save whole screen shot to Trilium",
 	contexts: ["page"]
 });
 
@@ -201,10 +221,24 @@ async function getImagePayloadFromSrc(src, pageUrl) {
 	};
 }
 
-async function saveScreenshot(pageUrl) {
-	const cropRect = await sendMessageToActiveTab({name: 'trilium-save-screenshot'});
+async function saveCroppedScreenshot(pageUrl) {
+	const cropRect = await sendMessageToActiveTab({name: 'trilium-get-rectangle-for-screenshot'});
 
-	const src = await takeScreenshot(cropRect);
+	const src = await takeCroppedScreenshot(cropRect);
+
+	const payload = await getImagePayloadFromSrc(src, pageUrl);
+
+	const resp = await triliumServerFacade.callService("POST", "clippings", payload);
+
+	if (!resp) {
+		return;
+	}
+
+	toast("Screenshot has been saved to Trilium.", resp.noteId);
+}
+
+async function saveWholeScreenshot(pageUrl) {
+	const src = await takeWholeScreenshot();
 
 	const payload = await getImagePayloadFromSrc(src, pageUrl);
 
@@ -314,8 +348,11 @@ browser.contextMenus.onClicked.addListener(async function(info, tab) {
 	if (info.menuItemId === 'trilium-save-selection') {
 		await saveSelection();
 	}
-	else if (info.menuItemId === 'trilium-save-screenshot') {
-		await saveScreenshot(info.pageUrl);
+	else if (info.menuItemId === 'trilium-save-cropped-screenshot') {
+		await saveCroppedScreenshot(info.pageUrl);
+	}
+	else if (info.menuItemId === 'trilium-save-whole-screenshot') {
+		await saveWholeScreenshot(info.pageUrl);
 	}
 	else if (info.menuItemId === 'trilium-save-image') {
 		await saveImage(info.srcUrl, info.pageUrl);
@@ -382,10 +419,15 @@ browser.runtime.onMessage.addListener(async request => {
 	else if (request.name === 'load-script') {
 		return await browser.tabs.executeScript({file: request.file});
 	}
-	else if (request.name === 'save-screenshot') {
+	else if (request.name === 'save-cropped-screenshot') {
 		const activeTab = await getActiveTab();
 
-		return await saveScreenshot(activeTab.url);
+		return await saveCroppedScreenshot(activeTab.url);
+	}
+	else if (request.name === 'save-whole-screenshot') {
+		const activeTab = await getActiveTab();
+
+		return await saveWholeScreenshot(activeTab.url);
 	}
 	else if (request.name === 'save-whole-page') {
 		return await saveWholePage();
