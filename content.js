@@ -59,6 +59,7 @@ function getRectangleArea() {
 		const messageComp = document.createElement('div');
 
 		const messageCompWidth = 300;
+		messageComp.setAttribute("tabindex", "0"); // so that it can be focused
 		messageComp.style.position = 'fixed';
 		messageComp.style.opacity = '0.95';
 		messageComp.style.fontSize = '14px';
@@ -88,6 +89,8 @@ function getRectangleArea() {
 		selection.style.position = 'fixed';
 
 		document.body.appendChild(selection);
+
+		messageComp.focus(); // we listen on keypresses on this element to cancel on escape
 
 		let isDragging = false;
 		let draggingStartPos = null;
@@ -126,9 +129,7 @@ function getRectangleArea() {
 			setSelectionSizeFromMouse(event);
 		}
 
-		function selection_mouseUp(event) {
-			setSelectionSizeFromMouse(event);
-
+		function removeOverlay() {
 			isDragging = false;
 
 			overlay.removeEventListener('mousedown', selection_mouseDown);
@@ -138,6 +139,12 @@ function getRectangleArea() {
 			document.body.removeChild(overlay);
 			document.body.removeChild(selection);
 			document.body.removeChild(messageComp);
+		}
+
+		function selection_mouseUp(event) {
+			setSelectionSizeFromMouse(event);
+
+			removeOverlay();
 
 			console.info('selectionArea:', selectionArea);
 
@@ -151,9 +158,17 @@ function getRectangleArea() {
 			setTimeout(() => resolve(selectionArea), 100);
 		}
 
+		function cancel(event) {
+			if (event.key === "Escape") {
+				removeOverlay();
+			}
+		}
+
 		overlay.addEventListener('mousedown', selection_mouseDown);
 		overlay.addEventListener('mousemove', selection_mouseMove);
 		overlay.addEventListener('mouseup', selection_mouseUp);
+		overlay.addEventListener('mouseup', selection_mouseUp);
+		messageComp.addEventListener('keydown', cancel);
 	});
 }
 
@@ -265,7 +280,7 @@ async function prepareMessageResponse(message) {
 		};
 
 	}
-	else if (message.name === 'trilium-save-screenshot') {
+	else if (message.name === 'trilium-get-rectangle-for-screenshot') {
 		return getRectangleArea();
 	}
 	else if (message.name === "trilium-save-page") {
