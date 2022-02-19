@@ -24,10 +24,12 @@ function pageTitle() {
 }
 
 function getReadableDocument() {
-	// Readability directly change the passed document so clone it so as
-	// to preserve the original web page.
+	// Readability directly change the passed document, so clone to preserve the original web page.
 	const documentCopy = document.cloneNode(true);
-	const readability = new Readability(documentCopy);
+	const readability = new Readability(documentCopy, {
+		serializer: el => el // so that .content is returned as DOM element instead of HTML
+	});
+
 	const article = readability.parse();
 
 	if (!article) {
@@ -36,7 +38,7 @@ function getReadableDocument() {
 
 	return {
 		title: article.title,
-		body: article.articleContent,
+		body: article.content,
 	}
 }
 
