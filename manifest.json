@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Trilium Web Clipper (dev)",
-  "version": "0.3.1",
+  "version": "1.0.0",
   "description": "Save web clippings to Trilium Notes.",
   "homepage_url": "https://github.com/zadam/trilium-web-clipper",
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
@@ -60,8 +60,8 @@
         "default": "Alt+Shift+S"
       }
     },
-    "saveScreenshot": {
-      "description": "Take a screenshot of the current page",
+    "saveCroppedScreenshot": {
+      "description": "Take a cropped screenshot of the current page",
       "suggested_key": {
         "default": "Ctrl+Shift+E"
       }

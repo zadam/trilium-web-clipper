@@ -1,5 +1,4 @@
 const $triliumServerUrl = $("#trilium-server-url");
-const $triliumServerUsername = $("#trilium-server-username");
 const $triliumServerPassword = $("#trilium-server-password");
 
 const $errorMessage = $("#error-message");
@@ -19,9 +18,8 @@ async function saveTriliumServerSetup(e) {
     e.preventDefault();
 
     if ($triliumServerUrl.val().trim().length === 0
-        || $triliumServerUsername.val().trim().length === 0
         || $triliumServerPassword.val().trim().length === 0) {
-        showError("One or more mandatory inputs are missing. Please fill in server URL, username and password.");
+        showError("One or more mandatory inputs are missing. Please fill in server URL and password.");
 
         return;
     }
@@ -36,7 +34,6 @@ async function saveTriliumServerSetup(e) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: $triliumServerUsername.val(),
                 password: $triliumServerPassword.val()
             })
         });
@@ -57,7 +54,6 @@ async function saveTriliumServerSetup(e) {
 
         showSuccess("Authentication against Trilium server has been successful.");
 
-        $triliumServerUsername.val('');
         $triliumServerPassword.val('');
 
         browser.storage.sync.set({
@@ -116,7 +112,6 @@ async function restoreOptions() {
     $successMessage.hide();
 
     $triliumServerUrl.val('');
-    $triliumServerUsername.val('');
     $triliumServerPassword.val('');
 
     if (triliumServerUrl && authToken) {
