@@ -6,7 +6,7 @@ chrome.commands.onCommand.addListener(async function (command) {
         await saveWholePage();
     } else if (command == "saveTabs") {
         await saveTabs();
-    } else if (command == "saveScreenshot") {
+    } else if (command == "saveCroppedScreenshot") {
         const activeTab = await getActiveTab();
 
         await saveCroppedScreenshot(activeTab.url);

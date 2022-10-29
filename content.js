@@ -228,7 +228,7 @@ async function prepareMessageResponse(message) {
 
 		if (message.noteId) {
 			messageText = document.createElement('p');
-			messageText.setAttribute("style", "padding: 0; margin: 0")
+			messageText.setAttribute("style", "padding: 0; margin: 0; font-size: larger;")
 			messageText.appendChild(document.createTextNode(message.message + " "));
 			messageText.appendChild(createLink(
 				{name: 'openNoteInTrilium', noteId: message.noteId},
@@ -253,7 +253,7 @@ async function prepareMessageResponse(message) {
 
 		showToast(messageText, {
 			settings: {
-				duration: 5000
+				duration: 7000
 			}
 		});
 	}
