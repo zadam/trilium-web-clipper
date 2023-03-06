@@ -42,6 +42,27 @@ function getReadableDocument() {
 	}
 }
 
+function getDocumentDates() {
+	var dates = {
+		publishedDate: null,
+		modifiedDate: null,  
+	};
+	
+	const articlePublishedTime = document.querySelector("meta[property='article:published_time']");
+	if (articlePublishedTime && articlePublishedTime.getAttribute('content')) {
+		dates.publishedDate = new Date(articlePublishedTime.getAttribute('content'));
+	}
+	
+	const articleModifiedTime = document.querySelector("meta[property='article:modified_time']");
+	if (articleModifiedTime && articleModifiedTime.getAttribute('content')) {
+		dates.modifiedDate = new Date(articleModifiedTime.getAttribute('content'));
+	}
+	
+	// TODO: if we didn't get dates from meta, then try to get them from JSON-LD
+
+	return dates;
+}
+
 function getRectangleArea() {
 	return new Promise((resolve, reject) => {
 		const overlay = document.createElement('div');
@@ -294,12 +315,22 @@ async function prepareMessageResponse(message) {
 
 		const images = getImages(body);
 
+        var labels = {};
+		const dates = getDocumentDates();
+		if (dates.publishedDate) {
+			labels['publishedDate'] = dates.publishedDate.toISOString().substring(0, 10);
+		}
+		if (dates.modifiedDate) {
+			labels['modifiedDate'] = dates.publishedDate.toISOString().substring(0, 10);
+		}
+
 		return {
 			title: title,
 			content: body.innerHTML,
 			images: images,
 			pageUrl: getPageLocationOrigin() + location.pathname + location.search,
-			clipType: 'page'
+			clipType: 'page',
+			labels: labels
 		};
 	}
 	else {
