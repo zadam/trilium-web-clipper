@@ -209,21 +209,21 @@ function getImages(container) {
 }
 
 function removeImages(container) {
-    const images = [];
+	const images = [];
 
-    for (const img of container.getElementsByTagName('img')) {
-        if (!img.src) {
-            continue;
-        }
+	for (const img of container.getElementsByTagName('img')) {
+		if (!img.src) {
+			continue;
+		}
 
-        images.push(img);
-    }
-    
-    for (const img of images) {
-        img.remove();
-    }
+		images.push(img);
+	}
+	
+	for (const img of images) {
+		img.remove();
+	}
 
-    return [];
+	return [];
 }
 
 function createLink(clickAction, text, color = "lightskyblue") {
