@@ -35,6 +35,7 @@ $saveTabsButton.on("click", () => sendMessage({name: 'save-tabs'}));
 
 const $saveLinkWithNoteWrapper = $("#save-link-with-note-wrapper");
 const $textNote = $("#save-link-with-note-textarea");
+const $keepTitle = $("#keep-title-checkbox");
 
 $textNote.on('keypress', function (event) {
     if ((event.which === 10 || event.which === 13) && event.ctrlKey) {
@@ -65,6 +66,10 @@ async function saveLinkWithNote() {
     if (!textNoteVal) {
         title = '';
         content = '';
+    }
+    else if ($keepTitle[0].checked){
+        title = '';
+        content = textNoteVal;
     }
     else {
         const match = /^(.*?)([.?!]\s|\n)/.exec(textNoteVal);
