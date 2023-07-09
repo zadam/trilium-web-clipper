@@ -113,6 +113,7 @@ function escapeHtml(string) {
 
 const $connectionStatus = $("#connection-status");
 const $needsConnection = $(".needs-connection");
+const $alreadyVisited = $("#already-visited");
 
 browser.runtime.onMessage.addListener(request => {
     if (request.name === 'trilium-search-status') {
@@ -145,11 +146,26 @@ browser.runtime.onMessage.addListener(request => {
         if (isConnected) {
             $needsConnection.removeAttr("disabled");
             $needsConnection.removeAttr("title");
+            browser.runtime.sendMessage({name: "trigger-trilium-search-note-url"});
         }
         else {
             $needsConnection.attr("disabled", "disabled");
             $needsConnection.attr("title", "This action can't be performed without active connection to Trilium.");
         }
+    }
+    else if (request.name == "trilium-previously-visited"){
+        const {searchNote} = request;
+        if (searchNote.status === 'found'){
+            const a = createLink({name: 'openNoteInTrilium', noteId: searchNote.noteId},
+            "Open in Trilium.")
+            noteFound = `Already visited website!`;
+            $alreadyVisited.html(noteFound);
+            $alreadyVisited[0].appendChild(a);
+        }else{
+            $alreadyVisited.html('');
+        }
+        
+
     }
 });
 

@@ -23,6 +23,21 @@ class TriliumServerFacade {
 		}
 		catch (e) {} // nothing might be listening
 	}
+	async sendTriliumSearchNoteToPopup(){
+		try{
+			await browser.runtime.sendMessage({
+				name: "trilium-previously-visited",
+				searchNote: this.triliumSearchNote
+			})
+
+		}
+		catch (e) {} // nothing might be listening
+	}
+
+	setTriliumSearchNote(st){
+		this.triliumSearchNote = st;
+		this.sendTriliumSearchNoteToPopup();
+	}
 
 	setTriliumSearch(ts) {
 		this.triliumSearch = ts;
@@ -116,6 +131,18 @@ class TriliumServerFacade {
 		this.setTriliumSearch({ status: 'not-found' });
 	}
 
+	async triggerSearchNoteByUrl(noteUrl) {
+		const resp = await triliumServerFacade.callService('GET', 'notes-by-url/' + encodeURIComponent(noteUrl))
+		let newStatus = {
+			status: 'not-found',
+			noteId: null
+		}
+		if (resp && resp.noteId) {
+			newStatus.noteId = resp.noteId;
+			newStatus.status = 'found';
+		}
+		this.setTriliumSearchNote(newStatus);
+	}
 	async waitForTriliumSearch() {
 		return new Promise((res, rej) => {
 			const checkStatus = () => {

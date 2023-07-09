@@ -10,6 +10,7 @@
 <body>
   <div style="display: flex; justify-content: space-between; vertical-align: middle;">
     <h3>Trilium Web Clipper</h3>
+    
 
     <div style="position: relative; top: 6px;">
       <button class="button" id="show-options-button">Options</button>
@@ -17,6 +18,7 @@
       <button class="button" id="show-help-button">Help</button>
     </div>
   </div>
+  <div id="already-visited"></div>
 
   <button class="button full needs-connection" id="save-cropped-screenshot-button">Crop screen shot</button>
   <button class="button full needs-connection" id="save-whole-screenshot-button">Save whole screen shot</button>
@@ -48,6 +50,7 @@
   <script src="../lib/cash.min.js"></script>
   <script src="popup.js"></script>
   <script src="../utils.js"></script>
+  <script src="../content.js"></script>
 </body>
 
 </html>

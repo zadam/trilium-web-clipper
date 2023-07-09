@@ -444,4 +444,8 @@ browser.runtime.onMessage.addListener(async request => {
 	else if (request.name === 'send-trilium-search-status') {
 		triliumServerFacade.sendTriliumSearchStatusToPopup();
 	}
+	else if (request.name === 'trigger-trilium-search-note-url') {
+		const activeTab = await getActiveTab();
+		triliumServerFacade.triggerSearchNoteByUrl(activeTab.url);
+	}
 });
