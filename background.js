@@ -72,11 +72,13 @@ browser.contextMenus.create({
 	contexts: ["selection"]
 });
 
+/*
 browser.contextMenus.create({
 	id: "trilium-save-cropped-screenshot",
 	title: "Clip screenshot to Trilium",
 	contexts: ["page"]
 });
+*/
 
 browser.contextMenus.create({
 	id: "trilium-save-cropped-screenshot",
@@ -93,6 +95,12 @@ browser.contextMenus.create({
 browser.contextMenus.create({
 	id: "trilium-save-page",
 	title: "Save whole page to Trilium",
+	contexts: ["page"]
+});
+
+browser.contextMenus.create({
+	id: "trilium-save-page-without-image",
+	title: "Save whole page without image to Trilium",
 	contexts: ["page"]
 });
 
@@ -263,8 +271,8 @@ async function saveImage(srcUrl, pageUrl) {
 	toast("Image has been saved to Trilium.", resp.noteId);
 }
 
-async function saveWholePage() {
-	const payload = await sendMessageToActiveTab({name: 'trilium-save-page'});
+async function saveWholePage(withImage = true) {
+	const payload = await sendMessageToActiveTab({name: 'trilium-save-page', withImage: withImage});
 
 	await postProcessImages(payload);
 
@@ -380,6 +388,9 @@ browser.contextMenus.onClicked.addListener(async function(info, tab) {
 	else if (info.menuItemId === 'trilium-save-page') {
 		await saveWholePage();
 	}
+	else if (info.menuItemId === 'trilium-save-page-without-image') {
+		await saveWholePage(false);
+	}    
 	else {
 		console.log("Unrecognized menuItemId", info.menuItemId);
 	}
@@ -432,6 +443,9 @@ browser.runtime.onMessage.addListener(async request => {
 	else if (request.name === 'save-whole-page') {
 		return await saveWholePage();
 	}
+	else if (request.name === 'save-whole-page-without-image') {
+		return await saveWholePage(false);
+	}    
 	else if (request.name === 'save-link-with-note') {
 		return await saveLinkWithNote(request.title, request.content);
 	}
