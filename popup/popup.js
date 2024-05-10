@@ -13,6 +13,7 @@ const $showOptionsButton = $("#show-options-button");
 const $saveCroppedScreenShotButton = $("#save-cropped-screenshot-button");
 const $saveWholeScreenShotButton = $("#save-whole-screenshot-button");
 const $saveWholePageButton = $("#save-whole-page-button");
+const $saveWholePageWithoutImageButton = $("#save-whole-page-without-image-button");
 const $saveTabsButton = $("#save-tabs-button");
 
 $showOptionsButton.on("click", () => browser.runtime.openOptionsPage());
@@ -30,6 +31,8 @@ $saveWholeScreenShotButton.on("click", () => {
 });
 
 $saveWholePageButton.on("click", () => sendMessage({name: 'save-whole-page'}));
+
+$saveWholePageWithoutImageButton.on("click", () => sendMessage({name: 'save-whole-page-without-image'}));
 
 $saveTabsButton.on("click", () => sendMessage({name: 'save-tabs'}));
 

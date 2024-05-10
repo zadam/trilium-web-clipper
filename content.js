@@ -229,6 +229,24 @@ function getImages(container) {
 	return images;
 }
 
+function removeImages(container) {
+	const images = [];
+
+	for (const img of container.getElementsByTagName('img')) {
+		if (!img.src) {
+			continue;
+		}
+
+		images.push(img);
+	}
+	
+	for (const img of images) {
+		img.remove();
+	}
+
+	return [];
+}
+
 function createLink(clickAction, text, color = "lightskyblue") {
 	const link = document.createElement('a');
 	link.href = "javascript:";
@@ -313,7 +331,7 @@ async function prepareMessageResponse(message) {
 
 		makeLinksAbsolute(body);
 
-		const images = getImages(body);
+		const images = message.withImage ? getImages(body) : removeImages(body);
 
         var labels = {};
 		const dates = getDocumentDates();
